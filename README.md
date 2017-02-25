@@ -2,6 +2,10 @@ Invisible Character Visualizer Visual Studio Extension
 ======================================================
 [![CodeFactor](https://www.codefactor.io/repository/github/shaneray/shanespace.visualstudio.invisiblecharactervisualizer/badge)](https://www.codefactor.io/repository/github/shaneray/shanespace.visualstudio.invisiblecharactervisualizer)
 
+Visual Studio Gallery
+----------------------
+https://marketplace.visualstudio.com/items?itemName=ShaneRay.InvisibleCharacterVisualizer
+
 Motivation
 ----------
 I ran into an issue where some code was not running as expected.  I hopped on StackOverflow and posted my question.
