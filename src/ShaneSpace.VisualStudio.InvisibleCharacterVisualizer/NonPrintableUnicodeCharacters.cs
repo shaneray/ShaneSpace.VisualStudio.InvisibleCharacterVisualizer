@@ -4,7 +4,8 @@
     {
         public static string[] UnicodeRanges { get; } =
         {
-            "\\0-\\x1F",
+            "\\0-\\x08",
+            "\\u000A-\\u001F",
             "\\x7F-\\x9F",
             "\\xAD",
             "\\u0378",
