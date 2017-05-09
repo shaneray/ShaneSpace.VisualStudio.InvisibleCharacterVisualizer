@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
 	<Metadata>
-		<Identity Id="ShaneSpace.VisualStudio.InvisibleCharacterVisualizer.ShaneSpace.5a2db9ac-2346-4baf-9842-e07a535c3a02" Version="1.1" Language="en-US" Publisher="ShaneSpace" />
+		<Identity Id="ShaneSpace.VisualStudio.InvisibleCharacterVisualizer.ShaneSpace.5a2db9ac-2346-4baf-9842-e07a535c3a02" Version="1.2" Language="en-US" Publisher="ShaneSpace" />
 		<DisplayName>Invisible Character Visualizer</DisplayName>
 		<Description xml:space="preserve">Add visibility to invisible unicode characters that may slip into your code.</Description>
 		<MoreInfo>https://github.com/shaneray/ShaneSpace.VisualStudio.InvisibleCharacterVisualizer</MoreInfo>
