@@ -5,6 +5,9 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 namespace ShaneSpace.VisualStudio.InvisibleCharacterVisualizer
 {
+    /// <summary>
+    /// The invisible character adornment tagger.
+    /// </summary>
     internal sealed class InvisibleCharacterAdornmentTagger
         : IntraTextAdornmentTagTransformer<InvisibleCharacterTag, InvisibleCharacterAdornment>
     {
@@ -13,21 +16,30 @@ namespace ShaneSpace.VisualStudio.InvisibleCharacterVisualizer
         {
         }
 
+        /// <inheritdoc/>
         public override void Dispose()
         {
             View.Properties.RemoveProperty(typeof(InvisibleCharacterTagger));
         }
 
-        internal static ITagger<IntraTextAdornmentTag> GetTagger(IWpfTextView view, Lazy<ITagAggregator<InvisibleCharacterTag>> colorTagger)
+        /// <summary>
+        /// Gets the invisible character adornment tagger.
+        /// </summary>
+        /// <param name="view">The WPF text view.</param>
+        /// <param name="invisibleCharacterTagger">The invisible character tagger.</param>
+        /// <returns>The invisible character adornment tagger.</returns>
+        internal static ITagger<IntraTextAdornmentTag> GetTagger(IWpfTextView view, Lazy<ITagAggregator<InvisibleCharacterTag>> invisibleCharacterTagger)
         {
-            return view.Properties.GetOrCreateSingletonProperty(() => new InvisibleCharacterAdornmentTagger(view, colorTagger.Value));
+            return view.Properties.GetOrCreateSingletonProperty(() => new InvisibleCharacterAdornmentTagger(view, invisibleCharacterTagger.Value));
         }
 
+        /// <inheritdoc/>
         protected override InvisibleCharacterAdornment CreateAdornment(InvisibleCharacterTag data, SnapshotSpan span)
         {
             return new InvisibleCharacterAdornment(data);
         }
 
+        /// <inheritdoc/>
         protected override bool UpdateAdornment(InvisibleCharacterAdornment adornment, InvisibleCharacterTag data)
         {
             return true;

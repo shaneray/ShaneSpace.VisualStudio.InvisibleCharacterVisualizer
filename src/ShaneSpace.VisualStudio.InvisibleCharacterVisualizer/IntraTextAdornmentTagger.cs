@@ -23,7 +23,7 @@ namespace ShaneSpace.VisualStudio.InvisibleCharacterVisualizer
     /// Helper class for interspersing adornments into text.
     /// </summary>
     /// <typeparam name="TData">The data.</typeparam>
-    /// <typeparam name="TAdornment">The adornment</typeparam>
+    /// <typeparam name="TAdornment">The adornment.</typeparam>
     /// <remarks>
     /// To avoid an issue around intra-text adornment support and its interaction with text buffer changes,
     /// this tagger reacts to text and color tag changes with a delay. It waits to send out its own TagsChanged
@@ -35,10 +35,17 @@ namespace ShaneSpace.VisualStudio.InvisibleCharacterVisualizer
         : ITagger<IntraTextAdornmentTag>
         where TAdornment : UIElement
     {
+        /// <summary>
+        /// The WPF text view.
+        /// </summary>
         protected readonly IWpfTextView View;
         private readonly List<SnapshotSpan> _invalidatedSpans = new List<SnapshotSpan>();
         private Dictionary<SnapshotSpan, TAdornment> _adornmentCache = new Dictionary<SnapshotSpan, TAdornment>();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IntraTextAdornmentTagger{TData, TAdornment}"/> class.
+        /// </summary>
+        /// <param name="view">The WPF text view.</param>
         protected IntraTextAdornmentTagger(IWpfTextView view)
         {
             View = view;
@@ -48,15 +55,19 @@ namespace ShaneSpace.VisualStudio.InvisibleCharacterVisualizer
             View.TextBuffer.Changed += HandleBufferChanged;
         }
 
+        /// <inheritdoc/>
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 
+        /// <summary>
+        /// Gets the text snapshot.
+        /// </summary>
         protected ITextSnapshot Snapshot { get; private set; }
 
         /// <summary>
         /// Produces tags on the snapshot that the tag consumer asked for.
         /// </summary>
-        /// <param name="spans">the spans</param>
-        /// <returns>Collection of tags</returns>
+        /// <param name="spans">the spans.</param>
+        /// <returns>Collection of tags.</returns>
         public virtual IEnumerable<ITagSpan<IntraTextAdornmentTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
             if (spans == null || spans.Count == 0)
@@ -65,7 +76,7 @@ namespace ShaneSpace.VisualStudio.InvisibleCharacterVisualizer
             }
 
             // Translate the request to the snapshot that this tagger is current with.
-            ITextSnapshot requestedSnapshot = spans[0].Snapshot;
+            var requestedSnapshot = spans[0].Snapshot;
 
             var translatedSpans = new NormalizedSnapshotSpanCollection(spans.Select(span => span.TranslateTo(Snapshot, SpanTrackingMode.EdgeExclusive)));
 
@@ -73,31 +84,31 @@ namespace ShaneSpace.VisualStudio.InvisibleCharacterVisualizer
             foreach (var tagSpan in GetAdornmentTagsOnSnapshot(translatedSpans))
             {
                 // Translate each adornment to the snapshot that the tagger was asked about.
-                SnapshotSpan span = tagSpan.Span.TranslateTo(requestedSnapshot, SpanTrackingMode.EdgeExclusive);
+                var span = tagSpan.Span.TranslateTo(requestedSnapshot, SpanTrackingMode.EdgeExclusive);
 
-                IntraTextAdornmentTag tag = new IntraTextAdornmentTag(tagSpan.Tag.Adornment, tagSpan.Tag.RemovalCallback, tagSpan.Tag.Affinity);
+                var tag = new IntraTextAdornmentTag(tagSpan.Tag.Adornment, tagSpan.Tag.RemovalCallback, -1, null, null, -1, tagSpan.Tag.Affinity);
                 yield return new TagSpan<IntraTextAdornmentTag>(span, tag);
             }
         }
 
         /// <summary>
-        /// Create Adornment
+        /// Create Adornment.
         /// </summary>
-        /// <param name="data">The adornment data</param>
+        /// <param name="data">The adornment data.</param>
         /// <param name="span">The span of text that this adornment will elide.</param>
         /// <returns>Adornment corresponding to given data. May be null.</returns>
         protected abstract TAdornment CreateAdornment(TData data, SnapshotSpan span);
 
         /// <summary>
-        /// Update Adornment
+        /// Update Adornment.
         /// </summary>
-        /// <param name="adornment">The adornment</param>
-        /// <param name="data">The data</param>
+        /// <param name="adornment">The adornment.</param>
+        /// <param name="data">The data.</param>
         /// <returns>True if the adornment was updated and should be kept. False to have the adornment removed from the view.</returns>
         protected abstract bool UpdateAdornment(TAdornment adornment, TData data);
 
         /// <summary>
-        /// Get Adornment Data
+        /// Get Adornment Data.
         /// </summary>
         /// <param name="spans">Spans to provide adornment data for. These spans do not necessarily correspond to text lines.</param>
         /// <remarks>
@@ -106,26 +117,28 @@ namespace ShaneSpace.VisualStudio.InvisibleCharacterVisualizer
         /// </remarks>
         /// <returns>
         /// A sequence of:
-        ///  * adornment data for each adornment to be displayed
-        ///  * the span of text that should be elided for that adornment (zero length spans are acceptable)
-        ///  * and affinity of the adornment (this should be null if and only if the elided span has a length greater than zero)
+        ///  * Adornment data for each adornment to be displayed.
+        ///  * The span of text that should be elided for that adornment (zero length spans are acceptable).
+        ///  * Affinity of the adornment (this should be null if and only if the elided span has a length greater than zero).
         /// </returns>
         protected abstract IEnumerable<Tuple<SnapshotSpan, PositionAffinity?, TData>> GetAdornmentData(NormalizedSnapshotSpanCollection spans);
 
         /// <summary>
         /// Causes intra-text adornments to be updated asynchronously.
         /// </summary>
-        /// <param name="spans">The spans</param>
+        /// <param name="spans">The spans.</param>
         protected void InvalidateSpans(IList<SnapshotSpan> spans)
         {
             lock (_invalidatedSpans)
             {
-                bool wasEmpty = _invalidatedSpans.Count == 0;
+                var wasEmpty = _invalidatedSpans.Count == 0;
                 _invalidatedSpans.AddRange(spans);
 
                 if (wasEmpty && _invalidatedSpans.Count > 0)
                 {
-                    View.VisualElement.Dispatcher.BeginInvoke(new Action(AsyncUpdate));
+#pragma warning disable VSTHRD001 // Avoid legacy thread switching APIs
+                    _ = View.VisualElement.Dispatcher.BeginInvoke(new Action(AsyncUpdate));
+#pragma warning restore VSTHRD001 // Avoid legacy thread switching APIs
                 }
             }
         }
@@ -133,16 +146,16 @@ namespace ShaneSpace.VisualStudio.InvisibleCharacterVisualizer
         /// <summary>
         /// Causes intra-text adornments to be updated synchronously.
         /// </summary>
-        /// <param name="span">The span</param>
+        /// <param name="span">The span.</param>
         protected void RaiseTagsChanged(SnapshotSpan span)
         {
-            EventHandler<SnapshotSpanEventArgs> handler = TagsChanged;
+            var handler = TagsChanged;
             handler?.Invoke(this, new SnapshotSpanEventArgs(span));
         }
 
         private void HandleBufferChanged(object sender, TextContentChangedEventArgs args)
         {
-            List<SnapshotSpan> editedSpans = args.Changes.Select(change => new SnapshotSpan(args.After, change.NewSpan)).ToList();
+            var editedSpans = args.Changes.Select(change => new SnapshotSpan(args.After, change.NewSpan)).ToList();
             InvalidateSpans(editedSpans);
         }
 
@@ -158,8 +171,8 @@ namespace ShaneSpace.VisualStudio.InvisibleCharacterVisualizer
 
                 foreach (var keyValuePair in _adornmentCache)
                 {
-                    SnapshotSpan key = keyValuePair.Key.TranslateTo(Snapshot, SpanTrackingMode.EdgeExclusive);
-                    TAdornment value = keyValuePair.Value;
+                    var key = keyValuePair.Key.TranslateTo(Snapshot, SpanTrackingMode.EdgeExclusive);
+                    var value = keyValuePair.Value;
                     if (translatedAdornmentCache.ContainsKey(key))
                     {
                         translatedAdornmentCache[key] = value;
@@ -185,15 +198,15 @@ namespace ShaneSpace.VisualStudio.InvisibleCharacterVisualizer
                 return;
             }
 
-            SnapshotPoint start = translatedSpans.Select(span => span.Start).Min();
-            SnapshotPoint end = translatedSpans.Select(span => span.End).Max();
+            var start = translatedSpans.Select(span => span.Start).Min();
+            var end = translatedSpans.Select(span => span.End).Max();
 
             RaiseTagsChanged(new SnapshotSpan(start, end));
         }
 
         private void HandleLayoutChanged(object sender, TextViewLayoutChangedEventArgs e)
         {
-            SnapshotSpan visibleSpan = View.TextViewLines.FormattedSpan;
+            var visibleSpan = View.TextViewLines.FormattedSpan;
 
             // Filter out the adornments that are no longer visible.
             var toRemove = new List<SnapshotSpan>(
@@ -202,7 +215,7 @@ namespace ShaneSpace.VisualStudio.InvisibleCharacterVisualizer
                 where !keyValuePair.Key.TranslateTo(visibleSpan.Snapshot, SpanTrackingMode.EdgeExclusive).IntersectsWith(visibleSpan)
                 select keyValuePair.Key);
 
-            foreach (SnapshotSpan span in toRemove)
+            foreach (var span in toRemove)
             {
                 _adornmentCache.Remove(span);
             }
@@ -216,7 +229,7 @@ namespace ShaneSpace.VisualStudio.InvisibleCharacterVisualizer
                 yield break;
             }
 
-            ITextSnapshot snapshot = spans[0].Snapshot;
+            var snapshot = spans[0].Snapshot;
 
             System.Diagnostics.Debug.Assert(snapshot == Snapshot, "Snapshot does not equal snapshot");
 
@@ -226,7 +239,7 @@ namespace ShaneSpace.VisualStudio.InvisibleCharacterVisualizer
 
             // Mark which adornments fall inside the requested spans with Keep=false
             // so that they can be removed from the cache if they no longer correspond to data tags.
-            HashSet<SnapshotSpan> toRemove = new HashSet<SnapshotSpan>();
+            var toRemove = new HashSet<SnapshotSpan>();
             foreach (var ar in _adornmentCache)
             {
                 if (spans.IntersectsWith(new NormalizedSnapshotSpanCollection(ar.Key)))
@@ -239,9 +252,9 @@ namespace ShaneSpace.VisualStudio.InvisibleCharacterVisualizer
             {
                 // Look up the corresponding adornment or create one if it's new.
                 TAdornment adornment;
-                SnapshotSpan snapshotSpan = spanDataPair.Item1;
-                PositionAffinity? affinity = spanDataPair.Item2;
-                TData adornmentData = spanDataPair.Item3;
+                var snapshotSpan = spanDataPair.Item1;
+                var affinity = spanDataPair.Item2;
+                var adornmentData = spanDataPair.Item3;
                 if (_adornmentCache.TryGetValue(snapshotSpan, out adornment))
                 {
                     if (UpdateAdornment(adornment, adornmentData))
@@ -274,7 +287,7 @@ namespace ShaneSpace.VisualStudio.InvisibleCharacterVisualizer
                 yield return new TagSpan<IntraTextAdornmentTag>(snapshotSpan, new IntraTextAdornmentTag(adornment, null, affinity));
             }
 
-            foreach (SnapshotSpan snapshotSpan in toRemove)
+            foreach (var snapshotSpan in toRemove)
             {
                 _adornmentCache.Remove(snapshotSpan);
             }

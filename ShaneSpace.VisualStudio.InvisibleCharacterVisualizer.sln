@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26206.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShaneSpace.VisualStudio.InvisibleCharacterVisualizer", "src\ShaneSpace.VisualStudio.InvisibleCharacterVisualizer\ShaneSpace.VisualStudio.InvisibleCharacterVisualizer.csproj", "{896D2ED8-1D3C-4255-A4D8-2E2933ECBF51}"
 EndProject
@@ -19,6 +19,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "code style", "code style", 
 		ShaneSpace.VisualStudio.InvisibleCharacterVisualizer.sln.DotSettings = ShaneSpace.VisualStudio.InvisibleCharacterVisualizer.sln.DotSettings
 		src\ShaneSpace.VisualStudio.InvisibleCharacterVisualizer\stylecop.json = src\ShaneSpace.VisualStudio.InvisibleCharacterVisualizer\stylecop.json
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Console1", "src\Console1\Console1.csproj", "{0D8EB637-0421-481B-A654-54559DC444D3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShaneSpace.VisualStudio.InvisibleCharacterVisualizer.Core", "src\ShaneSpace.VisualStudio.InvisibleCharacterVisualizer.Core\ShaneSpace.VisualStudio.InvisibleCharacterVisualizer.Core.csproj", "{30E60A0C-4B8A-4F11-A3F0-C04FFC7E0F2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,11 +46,38 @@ Global
 		{896D2ED8-1D3C-4255-A4D8-2E2933ECBF51}.Release|x64.Build.0 = Release|Any CPU
 		{896D2ED8-1D3C-4255-A4D8-2E2933ECBF51}.Release|x86.ActiveCfg = Release|Any CPU
 		{896D2ED8-1D3C-4255-A4D8-2E2933ECBF51}.Release|x86.Build.0 = Release|Any CPU
+		{0D8EB637-0421-481B-A654-54559DC444D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D8EB637-0421-481B-A654-54559DC444D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D8EB637-0421-481B-A654-54559DC444D3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0D8EB637-0421-481B-A654-54559DC444D3}.Debug|x64.Build.0 = Debug|Any CPU
+		{0D8EB637-0421-481B-A654-54559DC444D3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0D8EB637-0421-481B-A654-54559DC444D3}.Debug|x86.Build.0 = Debug|Any CPU
+		{0D8EB637-0421-481B-A654-54559DC444D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D8EB637-0421-481B-A654-54559DC444D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D8EB637-0421-481B-A654-54559DC444D3}.Release|x64.ActiveCfg = Release|Any CPU
+		{0D8EB637-0421-481B-A654-54559DC444D3}.Release|x64.Build.0 = Release|Any CPU
+		{0D8EB637-0421-481B-A654-54559DC444D3}.Release|x86.ActiveCfg = Release|Any CPU
+		{0D8EB637-0421-481B-A654-54559DC444D3}.Release|x86.Build.0 = Release|Any CPU
+		{30E60A0C-4B8A-4F11-A3F0-C04FFC7E0F2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30E60A0C-4B8A-4F11-A3F0-C04FFC7E0F2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30E60A0C-4B8A-4F11-A3F0-C04FFC7E0F2C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{30E60A0C-4B8A-4F11-A3F0-C04FFC7E0F2C}.Debug|x64.Build.0 = Debug|Any CPU
+		{30E60A0C-4B8A-4F11-A3F0-C04FFC7E0F2C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{30E60A0C-4B8A-4F11-A3F0-C04FFC7E0F2C}.Debug|x86.Build.0 = Debug|Any CPU
+		{30E60A0C-4B8A-4F11-A3F0-C04FFC7E0F2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30E60A0C-4B8A-4F11-A3F0-C04FFC7E0F2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30E60A0C-4B8A-4F11-A3F0-C04FFC7E0F2C}.Release|x64.ActiveCfg = Release|Any CPU
+		{30E60A0C-4B8A-4F11-A3F0-C04FFC7E0F2C}.Release|x64.Build.0 = Release|Any CPU
+		{30E60A0C-4B8A-4F11-A3F0-C04FFC7E0F2C}.Release|x86.ActiveCfg = Release|Any CPU
+		{30E60A0C-4B8A-4F11-A3F0-C04FFC7E0F2C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{DE5DFB6F-217D-4D81-8B26-9637C4B6DF17} = {DDE2AF8B-8A99-46A2-99F6-339D91A7C72F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2A353A81-6C8D-404D-B606-87C964FF501D}
 	EndGlobalSection
 EndGlobal

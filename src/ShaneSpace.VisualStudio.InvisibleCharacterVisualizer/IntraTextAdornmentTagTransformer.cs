@@ -21,8 +21,8 @@ namespace ShaneSpace.VisualStudio.InvisibleCharacterVisualizer
     /// <summary>
     /// Helper class for producing intra-text adornments from data tags.
     /// </summary>
-    /// <typeparam name="TDataTag">Type of data tag</typeparam>
-    /// <typeparam name="TAdornment">Type of adornment</typeparam>
+    /// <typeparam name="TDataTag">Type of data tag.</typeparam>
+    /// <typeparam name="TAdornment">Type of adornment.</typeparam>
     /// <remarks>
     /// For cases where intra-text adornments do not correspond exactly to tags,
     /// use the <see cref="IntraTextAdornmentTagger"/> base class.
@@ -32,16 +32,23 @@ namespace ShaneSpace.VisualStudio.InvisibleCharacterVisualizer
         where TDataTag : ITag
         where TAdornment : UIElement
     {
+        /// <summary>
+        /// The data tagger.
+        /// </summary>
         protected readonly ITagAggregator<TDataTag> DataTagger;
+
+        /// <summary>
+        /// The adornment affinity.
+        /// </summary>
         protected readonly PositionAffinity? AdornmentAffinity;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IntraTextAdornmentTagTransformer{TDataTag, TAdornment}"/> class.
         /// </summary>
-        /// <param name="dataTagger">The data tagger</param>
+        /// <param name="dataTagger">The data tagger.</param>
         /// <param name="adornmentAffinity">Determines whether adornments based on data tags with zero-length spans
         /// will stick with preceding or succeeding text characters.</param>
-        /// <param name="view">The view</param>
+        /// <param name="view">The view.</param>
         protected IntraTextAdornmentTagTransformer(IWpfTextView view, ITagAggregator<TDataTag> dataTagger, PositionAffinity adornmentAffinity = PositionAffinity.Successor)
             : base(view)
         {
@@ -51,11 +58,13 @@ namespace ShaneSpace.VisualStudio.InvisibleCharacterVisualizer
             DataTagger.TagsChanged += HandleDataTagsChanged;
         }
 
+        /// <inheritdoc/>
         public virtual void Dispose()
         {
             DataTagger.Dispose();
         }
 
+        /// <inheritdoc/>
         protected override IEnumerable<Tuple<SnapshotSpan, PositionAffinity?, TDataTag>> GetAdornmentData(NormalizedSnapshotSpanCollection spans)
         {
             if (spans.Count == 0)
@@ -63,11 +72,11 @@ namespace ShaneSpace.VisualStudio.InvisibleCharacterVisualizer
                 yield break;
             }
 
-            ITextSnapshot snapshot = spans[0].Snapshot;
+            var snapshot = spans[0].Snapshot;
 
-            foreach (IMappingTagSpan<TDataTag> dataTagSpan in DataTagger.GetTags(spans))
+            foreach (var dataTagSpan in DataTagger.GetTags(spans))
             {
-                NormalizedSnapshotSpanCollection dataTagSpans = dataTagSpan.Span.GetSpans(snapshot);
+                var dataTagSpans = dataTagSpan.Span.GetSpans(snapshot);
 
                 // Ignore data tags that are split by projection.
                 // This is theoretically possible but unlikely in current scenarios.
@@ -76,9 +85,8 @@ namespace ShaneSpace.VisualStudio.InvisibleCharacterVisualizer
                     continue;
                 }
 
-                SnapshotSpan span = dataTagSpans[0];
-
-                PositionAffinity? affinity = span.Length > 0 ? null : AdornmentAffinity;
+                var span = dataTagSpans[0];
+                var affinity = span.Length > 0 ? null : AdornmentAffinity;
 
                 yield return Tuple.Create(span, affinity, dataTagSpan.Tag);
             }
@@ -86,7 +94,7 @@ namespace ShaneSpace.VisualStudio.InvisibleCharacterVisualizer
 
         private void HandleDataTagsChanged(object sender, TagsChangedEventArgs args)
         {
-            NormalizedSnapshotSpanCollection changedSpans = args.Span.GetSpans(View.TextBuffer.CurrentSnapshot);
+            var changedSpans = args.Span.GetSpans(View.TextBuffer.CurrentSnapshot);
             InvalidateSpans(changedSpans);
         }
     }

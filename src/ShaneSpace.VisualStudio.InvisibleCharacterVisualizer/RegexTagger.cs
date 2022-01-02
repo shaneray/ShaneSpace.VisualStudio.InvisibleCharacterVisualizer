@@ -7,11 +7,20 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 namespace ShaneSpace.VisualStudio.InvisibleCharacterVisualizer
 {
+    /// <summary>
+    /// The regex tagger base class.
+    /// </summary>
+    /// <typeparam name="T">ITag Param.</typeparam>
     internal abstract class RegexTagger<T> : ITagger<T>
         where T : ITag
     {
         private readonly IEnumerable<Regex> _matchExpressions;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RegexTagger{T}"/> class.
+        /// </summary>
+        /// <param name="buffer">The buffer.</param>
+        /// <param name="matchExpressions">The match expressions.</param>
         protected RegexTagger(ITextBuffer buffer, IEnumerable<Regex> matchExpressions)
         {
             var expressions = matchExpressions as IList<Regex> ?? matchExpressions.ToList();
@@ -25,21 +34,23 @@ namespace ShaneSpace.VisualStudio.InvisibleCharacterVisualizer
             buffer.Changed += (sender, args) => HandleBufferChanged(args);
         }
 
+        /// <inheritdoc/>
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 
+        /// <inheritdoc/>
         public virtual IEnumerable<ITagSpan<T>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
             // Here we grab whole lines so that matches that only partially fall inside the spans argument are detected.
             // Note that the spans argument can contain spans that are sub-spans of lines or intersect multiple lines.
             foreach (var line in GetIntersectingLines(spans))
             {
-                string text = line.GetText();
+                var text = line.GetText();
 
                 foreach (var regex in _matchExpressions)
                 {
                     foreach (var match in regex.Matches(text).Cast<Match>())
                     {
-                        T tag = TryCreateTagForMatch(match);
+                        var tag = TryCreateTagForMatch(match);
                         if (EqualityComparer<T>.Default.Equals(tag, default(T)))
                         {
                             continue;
@@ -81,12 +92,12 @@ namespace ShaneSpace.VisualStudio.InvisibleCharacterVisualizer
             // Combine all changes into a single span so that
             // the ITagger<>.TagsChanged event can be raised just once for a compound edit
             // with many parts.
-            ITextSnapshot snapshot = args.After;
+            var snapshot = args.After;
 
-            int start = args.Changes[0].NewPosition;
-            int end = args.Changes[args.Changes.Count - 1].NewEnd;
+            var start = args.Changes[0].NewPosition;
+            var end = args.Changes[args.Changes.Count - 1].NewEnd;
 
-            SnapshotSpan totalAffectedSpan = new SnapshotSpan(
+            var totalAffectedSpan = new SnapshotSpan(
                 snapshot.GetLineFromPosition(start).Start,
                 snapshot.GetLineFromPosition(end).End);
 
@@ -100,14 +111,14 @@ namespace ShaneSpace.VisualStudio.InvisibleCharacterVisualizer
                 yield break;
             }
 
-            int lastVisitedLineNumber = -1;
-            ITextSnapshot snapshot = spans[0].Snapshot;
+            var lastVisitedLineNumber = -1;
+            var snapshot = spans[0].Snapshot;
             foreach (var span in spans)
             {
-                int firstLine = snapshot.GetLineNumberFromPosition(span.Start);
-                int lastLine = snapshot.GetLineNumberFromPosition(span.End);
+                var firstLine = snapshot.GetLineNumberFromPosition(span.Start);
+                var lastLine = snapshot.GetLineNumberFromPosition(span.End);
 
-                for (int i = Math.Max(lastVisitedLineNumber, firstLine); i <= lastLine; i++)
+                for (var i = Math.Max(lastVisitedLineNumber, firstLine); i <= lastLine; i++)
                 {
                     yield return snapshot.GetLineFromLineNumber(i);
                 }
